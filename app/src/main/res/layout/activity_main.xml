@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBack"
-    tools:context=".MainActivity">
+    tools:context=".mainactivity.MainActivity">
 
     <ImageView
         android:id="@+id/btn_setting"
@@ -61,58 +61,6 @@
             android:textSize="16sp"
             android:visibility="visible" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/edit_param1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_rect"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:hint="操作参数1"
-                android:inputType="number"
-                android:padding="8dp"
-                android:text="1"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp"
-                android:visibility="visible" />
-
-            <EditText
-                android:id="@+id/edit_param2"
-                android:background="@drawable/bg_rect"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:hint="操作参数2"
-                android:inputType="number"
-                android:padding="8dp"
-                android:text="0"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp"
-                android:visibility="visible" />
-
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/edit_param3"
-            android:background="@drawable/bg_rect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="操作参数3"
-            android:inputType="number"
-            android:padding="8dp"
-            android:text="1"
-            android:textColor="@color/colorAccent"
-            android:textSize="14sp"
-            android:visibility="visible" />
-
     </LinearLayout>
 
     <Button
@@ -121,16 +69,17 @@
         android:layout_height="80dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="188dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/bg_circle"
         android:text="连接硬件"
         android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="@+id/titanic_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/lin_setting" />
 
     <com.zyf.common.widget.TitanicTextView
         android:id="@+id/titanic_tv"
@@ -138,33 +87,31 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="SmartSpray"
         android:textColor="#212121"
         android:textSize="48sp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.42" />
+        app:layout_constraintTop_toBottomOf="@+id/lin_setting" />
 
     <Button
         android:id="@+id/btn_sendmsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorAccent"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/bg_rect"
-        android:text="发命令"
+        android:text="查询"
+        android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titanic_tv" />
 
@@ -174,11 +121,10 @@
         android:layout_height="200sp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
 
+        android:layout_marginBottom="8dp"
         app:areaBackground="@drawable/rocker_base"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

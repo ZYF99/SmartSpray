@@ -26,6 +26,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 ext{
+    brvahVersion = "2.9.46"
     geniusVersion = '2.1.0'
     butterknifeVersion = '9.0.0-rc3'
 }

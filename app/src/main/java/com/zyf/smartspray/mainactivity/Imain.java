@@ -1,4 +1,4 @@
-package com.zyf.smartspray;
+package com.zyf.smartspray.mainactivity;
 
 import com.zyf.factory.model.SmartEvent;
 
@@ -15,22 +15,10 @@ public interface Imain {
         //隐藏Loading
         void hideLoading();
 
-        //显示连接超时
-        void showTimeOut();
-
-        //显示socket错误
-        void showSocketError();
-
-        //显示服务器消息
-        void showRecvMsg(String msg);
-
-        //获取设置的参数
-        SmartEvent getSmartEvent();
-
     }
     interface Presenter{
         void initSocket(String ip,int port);
-        void sendMessage();
+        void sendMessage(SmartEvent smartEvent);
     }
 
 }

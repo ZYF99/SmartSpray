@@ -1,24 +1,35 @@
 package com.zyf.factory.helper;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
+import android.util.Log;
+
+import com.zyf.common.Common;
+import com.zyf.factory.model.SmartData;
+import com.zyf.factory.model.SmartEvent;
+
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SocketHelper {
 
     private static SocketHelper socketHelper = null;
     public Socket socket;
-    Listener listener;
-    BufferedWriter bufferedWriter = null;
-    //获取输入流,并且指定统一的编码格式     
-    BufferedReader bufferedReader = null;
-    boolean write = false;
-    String msg = "";
+    private Listener.main mListener;
+    private Listener.list lListener;
+    private boolean write = false;
+    public boolean isFirstInit;
+    SmartEvent smartEvent;
+
+    public void setlListener(Listener.list lListener) {
+        this.lListener = lListener;
+    }
 
     //单例
     private SocketHelper() {
@@ -33,58 +44,69 @@ public class SocketHelper {
     }
 
 
-    public void initSocket(final Listener listener, final String ip, final int port) {
+    public void initSocket(final Listener.main listener, final String ip, final int port) {
+        this.mListener = listener;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    socketHelper.listener = listener;
+                    socketHelper.mListener = listener;
                     socket = new Socket(ip, port);
 
-                    //通过socket获取输入输出字符流
-                    bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-                    bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-                    socket.setSoTimeout(5000);
+                    BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+                    final DataInputStream dis = new DataInputStream(bis);
 
                     //运行View层连接成功的回调
-                    listener.onConnectSuccess();
+                    mListener.onConnectSuccess();
 
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            while (true){
-                                try {
-                                    String str;
-                                    //通过while循环不断读取信息，   
-                                    while ((str = bufferedReader.readLine()) != null) {
-                                        //输出打印       
-                                        listener.onReceiveMsg(str);
+                            try {
+                                while (true) {
+                                    //通过while循环不断读取信息
+                                    byte[] bytes = new byte[1]; // 一次读取一个byte
+                                    String ret = "";
+                                    while (dis.read(bytes) != -1) {
+                                        ret += bytesToHexString(bytes) + " ";
+                                        if (dis.available() == 0) { //一个请求
+                                            if(lListener!=null){
+                                                lListener.onReceiveMsg(parseToObj(ret));
+                                            }
+                                            ret = "";
+                                        }
                                     }
-                                }catch (IOException e){
-                                    e.printStackTrace();
                                 }
-
+                            } catch (SocketException e) {
+                                e.printStackTrace();
+                                //mListener.onSocketError();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     }).start();
 
                     //死循环监听是否发送（发送按钮是否按下）
                     while (true) {
+                        OutputStream os = socket.getOutputStream();
+                        DataOutputStream ds = new DataOutputStream(os);
+
+                        if (isFirstInit) {
+                            //链接时发个1给服务器标识手机端
+                            ds.writeByte(1);
+                            //连接成功即发查询指令
+                            ds.write(Common.select);
+                            isFirstInit = false;
+                        }
                         if (write) {
-                            //bufferedWriter.write("\n");
-                            bufferedWriter.write("\n"+msg);
-                            bufferedWriter.write("\n");
-                            bufferedWriter.flush();
+                            ds.write(smartEvent.getSmartBytes());
                             write = false;
                         }
                     }
-
-                }catch (SocketException e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
-                }catch (IOException e) {
-                    e.printStackTrace();
-                    //listener.onSocketError();
+                    //mListener.onSocketError();
+                    //ExceptionUtil.decodeException(e);
                 }
             }
         }).start();
@@ -92,17 +114,53 @@ public class SocketHelper {
 
 
     //给外部提供的发送消息的方法
-    public void writeMessage(String msg) {
+    public void writeMessage(SmartEvent smartEvent) {
         write = true;
-        socketHelper.msg = msg;
+        this.smartEvent = smartEvent;
     }
 
     //给View层的接口
     public interface Listener {
-        void onReceiveMsg(String msg);
-        void onConnectSuccess();
-        void onTimeOut();
-        void onSocketError();
+        interface list{
+            void onReceiveMsg(List<SmartData> list);
+        }
+        interface main{
+            void onConnectSuccess();
+        }
     }
 
+    /**
+     * byte[]数组转换为16进制的字符串
+     *
+     * @param bytes 要转换的字节数组
+     * @return 转换后的结果
+     */
+    private static String bytesToHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            String hex = Integer.toHexString(0xFF & bytes[i]);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
+
+    }
+
+    private List<SmartData> parseToObj(String msg) {
+        msg = msg.replaceAll(" ","");
+        List<SmartData> list = new ArrayList<>();
+        for (int i = 8; i < 39; i += 8) {
+            String temp = "";
+            for (int j = i; j < i + 8; j++) {
+                temp += msg.charAt(j);
+            }
+            Log.d("temp", temp);
+            list.add(new SmartData(temp));
+        }
+        return list;
+
+    }
 }
+

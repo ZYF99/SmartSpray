@@ -3,6 +3,8 @@ package com.zyf.common.app;
 import android.support.annotation.StringRes;
 import android.widget.Toast;
 
+import com.zyf.common.SharedPreferencesUtil;
+
 import net.qiujuer.genius.kit.handler.Run;
 import net.qiujuer.genius.kit.handler.runable.Action;
 
@@ -13,6 +15,7 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        SharedPreferencesUtil.getInstance(this,"local");
     }
 
     //向外部类提供访问此Application单例的全局方法

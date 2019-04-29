@@ -29,9 +29,9 @@ public class Titanic {
                 textView.setSinking(true);
 
                 // horizontal animation. 200 = wave.png width
-                ObjectAnimator maskXAnimator = ObjectAnimator.ofFloat(textView, "maskX", 0, 200);
+                ObjectAnimator maskXAnimator = ObjectAnimator.ofFloat(textView, "maskX", 0, 500);
                 maskXAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                maskXAnimator.setDuration(800);
+                maskXAnimator.setDuration(500);
                 maskXAnimator.setStartDelay(0);
 
                 int h = textView.getHeight();
@@ -42,7 +42,7 @@ public class Titanic {
                 ObjectAnimator maskYAnimator = ObjectAnimator.ofFloat(textView, "maskY", h/2, - h/2);
                 maskYAnimator.setRepeatCount(ValueAnimator.INFINITE);
                 maskYAnimator.setRepeatMode(ValueAnimator.REVERSE);
-                maskYAnimator.setDuration(3000);
+                maskYAnimator.setDuration(800);
                 maskYAnimator.setStartDelay(0);
 
                 // now play both animations together

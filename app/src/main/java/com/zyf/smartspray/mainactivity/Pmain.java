@@ -1,12 +1,21 @@
-package com.zyf.smartspray;
+package com.zyf.smartspray.mainactivity;
+
+import android.content.Context;
 
 import com.zyf.common.app.Application;
 import com.zyf.factory.helper.SocketHelper;
+import com.zyf.factory.model.SmartData;
+import com.zyf.factory.model.SmartEvent;
+import com.zyf.smartspray.listactivity.ListActivity;
+
 import net.qiujuer.genius.kit.handler.Run;
 import net.qiujuer.genius.kit.handler.runable.Action;
 
-public class Pmain implements Imain.Presenter,SocketHelper.Listener {
+import java.util.List;
 
+public class Pmain implements Imain.Presenter,SocketHelper.Listener.main {
+
+    static Context context;
     static Imain.View mainView;
     static Pmain presenter;
     SocketHelper socketHelper;
@@ -25,9 +34,9 @@ public class Pmain implements Imain.Presenter,SocketHelper.Listener {
     public void initSocket(String ip, int port){
         mainView.showLoading();
         //初始化Socket(用输入的ip和端口号去连接)
+        socketHelper.isFirstInit = true;
         socketHelper.initSocket(this, ip,port);
     }
-
 
 
     //提供给View层的获取单例对象的方法
@@ -35,20 +44,10 @@ public class Pmain implements Imain.Presenter,SocketHelper.Listener {
         if (presenter==null){
             presenter = new Pmain(view);
         }
+        context = (Context) view;
         return presenter;
     }
 
-
-    //当socket从服务端接到数据的回调
-    @Override
-    public void onReceiveMsg(final String msg) {
-        Run.onUiAsync(new Action() {
-            @Override
-            public void call() {
-                mainView.showRecvMsg(msg);
-            }
-        });
-    }
 
     //当socket连接成功后的回调
     @Override
@@ -58,30 +57,21 @@ public class Pmain implements Imain.Presenter,SocketHelper.Listener {
             public void call() {
                 mainView.hideBtn();
                 mainView.hideLoading();
+                ListActivity.show(context);
             }
         });
     }
 
-    //向外提供的发命令的方法
+
+    //真实的发命令的方法
     @Override
-    public void sendMessage(){
+    public void sendMessage(SmartEvent smartEvent) {
         if (socketHelper.socket != null) {
             //构建命令
-            socketHelper.writeMessage(mainView.getSmartEvent().toSmartString());
+            socketHelper.writeMessage(smartEvent);
         } else {
             Application.showToast("请先连接socket服务");
         }
     }
 
-    //连接超时的监听
-    @Override
-    public void onTimeOut() {
-        mainView.showTimeOut();
-    }
-
-    //socket连接发生错误
-    @Override
-    public void onSocketError() {
-        mainView.showSocketError();
-    }
 }

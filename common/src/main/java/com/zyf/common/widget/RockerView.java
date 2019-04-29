@@ -14,7 +14,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -280,7 +279,6 @@ public class RockerView extends View {
                 float moveX = event.getX();
                 float moveY = event.getY();
                 baseDistance = mAreaRadius+2;
-                Log.d("baseDistance",baseDistance+"");
                 mRockerPosition = getRockerPositionPoint(mCenterPoint, new Point((int) moveX, (int) moveY), mAreaRadius + mRockerRadius, mRockerRadius);
                 moveRocker(mRockerPosition.x, mRockerPosition.y);
                 break;
@@ -397,7 +395,6 @@ public class RockerView extends View {
      * @param angle 摇动角度
      */
     private void callBack(double angle, float distance) {
-        Log.d("distance",distance+"");
         if (Math.abs(distance - lastDistance) >= (baseDistance / mDistanceLevel)) {
             lastDistance = distance;
             if (null != mOnDistanceLevelListener) {
