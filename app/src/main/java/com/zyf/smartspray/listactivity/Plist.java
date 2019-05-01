@@ -10,7 +10,6 @@ public class Plist implements Ilist.Presenter, SocketHelper.Listener.list {
     private static Ilist.View listView;
     private static Plist presenter;
     private SocketHelper socketHelper;
-    Thread thread_send;
 
 
     private Plist(Ilist.View view){
@@ -37,26 +36,6 @@ public class Plist implements Ilist.Presenter, SocketHelper.Listener.list {
     @Override
     public void onReceiveMsg(List<SmartData> list) {
         listView.showRecvMsg(list);
-        if(thread_send==null){
-            thread_send = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true){
-                        sendMessage(new SmartEvent("255","01","0"));
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-            });
-            thread_send.start();
-        }
-
-
-
     }
 
     //真实的发命令的方法

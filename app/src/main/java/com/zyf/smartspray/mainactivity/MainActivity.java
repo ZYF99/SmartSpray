@@ -177,8 +177,8 @@ public class MainActivity extends Activity implements Imain.View {
     //点击了发送按钮
     @OnClick(R.id.btn_sendmsg)
     void onSendMsgClick() {
-        //查询
-        presenter.sendMessage(new SmartEvent("255","01","0"));
+/*        //查询
+        presenter.sendMessage(new SmartEvent("255","01","0"));*/
 
     }
 
